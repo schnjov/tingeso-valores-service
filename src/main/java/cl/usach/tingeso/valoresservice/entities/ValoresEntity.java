@@ -17,7 +17,7 @@ public class ValoresEntity {
     @Id
     private String id;
 
-    private String codigo_proveedor;
+    private String codigoProveedor;
 
     private int porcentajeGrasa;
 

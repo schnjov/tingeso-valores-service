@@ -67,11 +67,11 @@ public class ValoresService {
                     int grasa = (int) grasaCell.getNumericCellValue();
                     int solidos = (int) solidosCell.getNumericCellValue();
                     String proveedorCodigo = proveedorCell.getStringCellValue();
-                    //Aqui se valida que existe un proveedor con el codigo ingresado
-                    String url = proveedorServiceBaseUrl + "exist/" + proveedorCodigo;
-                    ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
-                    boolean exists = Boolean.TRUE.equals(response.getBody());
-                    if (exists) {
+                    if (existeProveedor(proveedorCodigo)) {
+                        ValoresEntity valoresExistentes = valoresRepository.findByCodigoProveedor(proveedorCodigo);
+                        if (valoresExistentes != null) {
+                            valoresRepository.delete(valoresExistentes);
+                        }
                         String id = UUID.randomUUID().toString();
                         if (valoresRepository.findById(id).isPresent()) {
                             id = UUID.randomUUID().toString();
@@ -84,5 +84,15 @@ public class ValoresService {
             counter++;
         }
         return valoresAcopioEntityList;
+    }
+
+    public ValoresEntity getValoresByCodigoProveedor(String codigoProveedor) {
+        return valoresRepository.findByCodigoProveedor(codigoProveedor);
+    }
+
+    private boolean existeProveedor(String codigoProveedor) {
+        String url = proveedorServiceBaseUrl + "exist/" + codigoProveedor;
+        ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
+        return Boolean.TRUE.equals(response.getBody());
     }
 }
